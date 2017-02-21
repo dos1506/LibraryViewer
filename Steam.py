@@ -12,7 +12,7 @@ base = declarative_base()
 
 user = os.environ['USER_STEAM']
 pswd = os.environ['PSWD_STEAM']
-engine = create_engine('mysql://{user}:{pswd}@localhost/steam?charset=utf8mb4'.format(user=user, pswd=pswd)
+engine = create_engine('mysql://{user}:{pswd}@localhost/steam?charset=utf8mb4'.format(user=user, pswd=pswd))
 base.metadata.create_all(bind=engine)
 
 class App(base):
