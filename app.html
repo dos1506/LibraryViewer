@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <title>Steamライブラリ検索するやつ</title>
+  <link rel='stylesheet' type='text/css' href='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.css' media='all' />
+  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="./css/app.css" />
+  <script src="//code.angularjs.org/1.5.7/angular.min.js"></script>
+  <script src='//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.9.0/loading-bar.min.js'></script>
+  <script src="./js/app.js"></script>
+</head>
+
+<body class="container" ng-app="myApp" ng-controller="myController">
+  <form>
+    <div class="form-group">
+      Steam コミュニティプロフィールのURL:
+      <div class="row">
+        <div class="col-xs-7">
+          <input type="text" placeholder="'id/hoge' or 'profile/0123456789'" class="form-control" ng-model="profile" />
+        </div>
+        <button class="btn btn-primary" ng-click="onclick()">GET</button>
+      </div>
+    </div>
+
+    タグのしぼりこみ
+    <input type="text" class="form-control" ng-model="targetTag"/>
+  </form>
+
+  <div class="box" ng-if="tagArray.length">
+    <div class="row">
+      <div class="col-xs-4" ng-repeat="tag in tagArray | filter: targetTag: tag.name |orderBy: 'name'">
+        <input type="checkbox" ng-checked="tag.checked" ng-click="tag.checked = !tag.checked" />
+        <label>{{tag.name}}</label>
+      </div>
+    </div>
+  </div>
+
+  <span>ヒット数: {{(games|andTagFilter: tagArray).length}}</span>
+
+  <table ng-if="!games['error']" class="table">
+    <thead class="thead-default">
+      <tr>
+        <th class="text-center col-xs-5">タイトル</th>
+        <th class="text-center col-xs-3">プレイ時間</th>
+        <th class="text-center col-xs-5">タグ</th>
+      </tr>
+    </thead>
+    <tr ng-repeat="game in games | orderBy: '-hoursOnRecord' | andTagFilter: tagArray">
+      <td>{{game.name}}</td>
+      <td class="text-center">{{game.hoursOnRecord}}</td>
+      <td class="text-center">
+        <button class="btn" ng-click='is_visible = !is_visible'>
+          <div ng-if="is_visible" ng-repeat="tag in game.tags track by $index">
+            {{tag}}
+          </div>
+          <div ng-if="!is_visible">タグを表示</div>
+        </button>
+      </td>
+    </tr>
+  </table>
+
+  <div ng-if="games['error']" class="alert alert-danger" role="alert">
+    指定されたプロフィールは存在しないか非公開です
+  </div>
+
+</body>
+
+</html>
